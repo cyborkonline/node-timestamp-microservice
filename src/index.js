@@ -1,9 +1,12 @@
 import * as babel from 'babel-core';
 import express from 'express';
-
+import fs from 'fs'
+import cors from 'cors';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
+app.use(cors())
 app.get('/:timestamp', function(request, response) {
   const timestamp = request.params.timestamp;
   response.json(getTimestampJSON(timestamp));
@@ -12,10 +15,15 @@ app.get('/:timestamp', function(request, response) {
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
-
 function getNaturalDate(date) {
     return date.getMonth() + '/' + date.getDate() + '/' + date.getFullYear();
 }
+
+app.get('/', function (req, res) {
+    res.set('content-type','text/html');
+    res.send(fs.readFileSync(__dirname+'/index.html','utf8'));
+    res.end();
+});
 
 function getTimestampJSON(timestamp) {
     const timeResult = {
